@@ -1,0 +1,13 @@
+Flask
+python-socketio
+eventlet
+pydub
+simpleaudio
+pi-audio-player/
+├── main.py
+├── templates/
+│   └── index.html
+├── static/
+│   └── style.css
+├── uploads/
+├── requirements.txt

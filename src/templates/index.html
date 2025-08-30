@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PI SACN Audio Player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Audio Player</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".wav,.mp3" required>
+        Universe: <input type="text" name="universe" required>
+        Address: <input type="text" name="address" required>
+        Channel: <input type="number" name="channel" min="0" max="255" required>
+        <button type="submit">Upload</button>
+    </form>
+    <h2>Master Volume</h2>
+    <input type="range" min="0" max="1" step="0.01" value="{{ master_volume }}" id="masterVolume">
+    <span id="volumeValue">{{ master_volume }}</span>
+    <h2>Tracks</h2>
+    <table>
+        <tr>
+            <th>Track</th><th>Universe</th><th>Address</th><th>Channel</th><th>Status</th><th>Action</th><th>Autoplay on Boot</th>
+        </tr>
+        {% for filename, info in tracks.items() %}
+        <tr>
+            <td>{{ filename }}</td>
+            <td>{{ info.universe }}</td>
+            <td>{{ info.address }}</td>
+            <td>
+                <form action="/play/{{ filename }}" method="post" style="display:inline;">
+                    <input type="number" name="channel" min="0" max="255" value="{{ info.channel }}">
+                    <button type="submit">Set Channel</button>
+                </form>
+            </td>
+            <td>{{ 'Playing' if info.playing else 'Stopped' }}</td>
+            <td>
+                <audio controls src="/uploads/{{ filename }}"></audio>
+            </td>
+            <td>
+                <form action="/set_autoplay/{{ filename }}" method="post" style="display:inline;">
+                    <input type="checkbox" name="autoplay" {% if filename in autoplay_tracks %}checked{% endif %} onchange="this.form.submit()">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Network Settings</h2>
+    <form action="/set_ip" method="post">
+        <label>Static IP Address:</label>
+        <input type="text" name="ip" placeholder="e.g. 192.168.1.100">
+        <label>Router (Gateway):</label>
+        <input type="text" name="router" placeholder="e.g. 192.168.1.1">
+        <label>DNS:</label>
+        <input type="text" name="dns" placeholder="e.g. 8.8.8.8">
+        <button type="submit">Set Static IP</button>
+    </form>
+    <form action="/reboot" method="post" style="margin-top:2em;">
+        <button type="submit" onclick="return confirm('Are you sure you want to reboot?')">Reboot Raspberry Pi</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <script>
+        const volumeSlider = document.getElementById('masterVolume');
+        const volumeValue = document.getElementById('volumeValue');
+        volumeSlider.oninput = function() {
+            volumeValue.textContent = this.value;
+            fetch('/set_master_volume', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'volume=' + this.value
+            });
+        };
+    </script>
+</body>
+</html>
