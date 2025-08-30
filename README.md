@@ -24,7 +24,7 @@ pi-audio-player
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/samstudholme/sacnaudioplayer.git
    cd pi-audio-player
    ```
 
