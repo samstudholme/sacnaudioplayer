@@ -1,6 +1,8 @@
 # Raspberry Pi Audio Player
 
-This project is a lightweight web application designed to run on a Raspberry Pi, allowing users to upload and manage audio tracks. The application provides functionality to specify ACN universe, address, and playback channel for each track, as well as control the master volume for all tracks.
+This project is a lightweight web application designed to run on a Raspberry Pi, allowing users to upload and manage audio tracks. The application provides functionality to specify ACN universe, address, and playback channel for each track, as well as control the master volume for all tracks. 
+
+## Project Written using Copilot (may not work)
 
 ## Project Structure
 
